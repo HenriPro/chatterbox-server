@@ -1,6 +1,8 @@
 var request = require('request');
 var expect = require('chai').expect;
 
+
+
 describe('server', function() {
   it('should respond to GET requests for /classes/messages with a 200 status code', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
@@ -31,7 +33,7 @@ describe('server', function() {
       expect(parsedBody.results).to.be.an('array');
       done();
     });
-  });
+  });  
 
   it('should accept POST requests to /classes/messages', function(done) {
     var requestParams = {method: 'POST',
@@ -72,6 +74,34 @@ describe('server', function() {
       done();
     });
   });
+
+// Additional Tests:
+  // 1. it should have a global array with all the previous messages stored inside of it
+    // expect array to exist
+    // expect a message object with properties of objectId, username, text
+  // it('it should have a global array with all the previous messages stored inside of it', function(done) {
+  //   var requestParams = {method: 'POST',
+  //     uri: 'http://127.0.0.1:3000/classes/messages',
+  //     json: {
+  //       username: 'Jono',
+  //       message: 'Do my bidding!',
+        
+  //     }
+  //   };
+
+  //   request(requestParams, function(error, response, body) {
+  //     expect(response.statusCode).to.equal(201);
+  //     done();
+  //   });
+
+    
+  // });
+  // 2. it should have messages stored in the storage array with an objectId that increments with each new message added
+    // add 1 test message
+    // expect testMessage.objectId to equal 1
+    // add another test message
+    // expect 2nd testMessage.objectId to equal 2
+  // 3. 
 
 
 });
