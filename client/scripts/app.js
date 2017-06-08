@@ -40,10 +40,11 @@ var app = {
     app.startSpinner();
 
     // POST the message to the server
+    console.log(message);
     $.ajax({
       url: app.server,
       type: 'POST',
-      data: message,
+      data: JSON.stringify(message),
       success: function (data) {
         // Clear messages input
         app.$message.val('');
