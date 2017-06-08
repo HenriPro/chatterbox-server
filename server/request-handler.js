@@ -11,7 +11,12 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var allPreviousMessages = [];
+var allPreviousMessages = [
+  {
+    username: 'Jono',
+    message: 'Do my bidding!',
+    text: 'Do my bidding!'
+  }];
 
 
 var requestHandler = function(request, response) {
@@ -38,11 +43,12 @@ var requestHandler = function(request, response) {
 
   
   if (request.method === 'GET') {
-    if (request.url === '/classes/messages') {
+    if (request.url === '/classes/messages?order=-createdAt' || request.url === '/classes/messages') {
       responseObj.results = allPreviousMessages;
       statusCode = 200;
     } else {
       statusCode = 404;
+      console.log('this is the request url in the 404 error', request.method);
     }
     
   } else if (request.method === 'POST') {
@@ -50,14 +56,29 @@ var requestHandler = function(request, response) {
       var currentMessage = [];
       request.on('error', (err) => {
         console.log('error', err);
-      }).on('data', (chunk) => {
-        currentMessage.push(chunk);
-      }).on('end', () => {
-        allPreviousMessages.push(JSON.parse(Buffer.concat(currentMessage).toString()));
+      });
+      request.on('data', (chunk) => {
+        if (Buffer.isBuffer(chunk)) {
+          currentMessage.push(chunk);
+        }
+      });
+      request.on('end', () => {
+        if (currentMessage.length > 0) {
+          // console.log('this is logging from POST about JSON.parse buffer', (Buffer.concat(currentMessage).toString()));
+          allPreviousMessages.push(JSON.parse(Buffer.concat(currentMessage).toString()));
+          console.log('this is logging from POST of allPreviousMessages', allPreviousMessages);
+        }
       });
       statusCode = 201;
-    }
 
+    }
+  
+  } else if (request.method === 'OPTIONS') {
+    statusCode = 200;
+    var headers = defaultCorsHeaders;
+    headers['Content-Type'] = 'application/json';
+    response.writeHead(statusCode, headers);
+    response.end(JSON.stringify(responseObj));
   }
 
 
@@ -68,7 +89,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
