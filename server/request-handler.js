@@ -1,6 +1,7 @@
 const fs = require('fs');
 const url = require('url');
 const path = require('path');
+const _ = require('underscore');
 
 var allPreviousMessages = [
   {
@@ -80,13 +81,19 @@ var requestHandler = function(request, response) {
         console.log(err);
         endResponse(response, 404, htmlHeaders, '<h1>ERROR 404</h1>'); 
       } else {
-        endResponse(response, 200, htmlHeaders, data); 
+        var dotArray = pathname.split('.');
+        if (dotArray[dotArray.length - 1] === 'css') {
+          console.log('this is getting to css in htmlCall', pathname);
+          htmlHeaders['Content-Type'] = 'text/css';
+          endResponse(response, 200, htmlHeaders, data);
+        } else {
+          htmlHeaders['Content-Type'] = 'text/html';
+          endResponse(response, 200, htmlHeaders, data); 
+        }
       }
       console.log(data);
     });
 
-    ///Users/student/code/hrsf78-chatterbox-server/server
-    // endResponse(response, statusCode, htmlHeaders, htmlResponseObj);
   };
 
   if (pathName === '/classes/messages') {

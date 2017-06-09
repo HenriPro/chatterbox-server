@@ -98,8 +98,6 @@ describe('Node Server Request Listener Function', function() {
     expect(res._responseCode).to.equal(200);
     var messages = JSON.parse(res._data).results;
 
-    console.log('this is logging from the spec file: ', messages[0]);
-    // expect('rofl').to.equal('lol');
 
     expect(messages.length).to.be.above(0);
    
